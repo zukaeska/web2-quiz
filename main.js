@@ -1,8 +1,19 @@
+var currentNote;
+var currentTimeout;
+var indexer;
+
+
 function submitNote() {
     var textValue = $("#ReminderText").val();
     var dateValue = $("#Date").val();
     var timeValue = $("#Time").val();
     var id = generateUUID();
+
+    var date = new Date(dateValue + ' ' + timeValue);
+    
+    if (date <= new Date()) {
+        return errorFunction();
+    };
 
 
     if (dateValue == "" || timeValue == "") {
@@ -19,11 +30,13 @@ function submitNote() {
                 "time" : timeValue});
     var notesJSON = JSON.stringify(notes);
     localStorage.setItem("Notes",notesJSON);
-
+    clearTimeout(currentTimeout);
+    setTime();
+    showNote();
 }
 
 function errorFunction() {
-    alert("invalid parameters, you must fill all inputs");
+    alert("invalid parameters, you must fill all inputs and date must be greater then current date");
 };
 
 function generateUUID() { // Public Domain/MIT
@@ -70,4 +83,76 @@ function showNote() {
     }  
 
 }
+
+function deleteNote() {
+    var noteId = $("#noteId").val();
+    if (localStorage.getItem("Notes") != null) {
+        var notes = JSON.parse(localStorage.getItem("Notes"));
+        var deletedNotes = notes.filter(note => note.ID != noteId);
+        var notesJSON = JSON.stringify(deletedNotes);
+        if (deletedNotes.length != 0) {
+            localStorage.setItem("Notes",notesJSON);
+        } else {
+            localStorage.removeItem("Notes");
+        };
+        showNote();
+    } 
+    clearTimeout(currentTimeout);
+    setTime();
+}
+
+
+
+
+$(function () {
+    setTime();
+});
+
+
+
+
+
+
+function setTime() {
+    var notes;
+    if (localStorage.getItem("Notes") != null) {
+    notes = JSON.parse(localStorage.getItem("Notes"));
+
+    notes.sort(function (a, b) {
+        var dateA = new Date(a.dateTime + ' ' + a.time), dateB = new Date(b.dateTime + ' ' + b.time);
+        return dateA - dateB;
+    });
+    
+    currentNote = notes[0];
+    console.log(currentNote);
+    var date = new Date(currentNote.dateTime + ' ' + currentNote.time);
+    var time = date.getTime() - Date.now();
+    if (time > 0) {
+        currentTimeout = setTimeout(alertFunction, time);
+    }
+    console.log(date, time);
+    }
+}
+
+function alertFunction() {
+    clearTimeout(currentTimeout);
+    var noteId = currentNote.ID;
+    if (localStorage.getItem("Notes") != null) {
+        var notes = JSON.parse(localStorage.getItem("Notes"));
+        var deletedNotes = notes.filter(note => note.ID != noteId);
+        var notesJSON = JSON.stringify(deletedNotes);
+        if (deletedNotes.length != 0) {
+            localStorage.setItem("Notes",notesJSON);
+        } else {
+            localStorage.removeItem("Notes");
+        };
+        
+    }; 
+    alert(currentNote.reminderText);
+    setTime();
+    showNote();
+
+}
+
+
 
