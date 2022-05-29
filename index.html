@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+    </head>
+    <body style="background-color: grey;">
+        <h1>Select Speech Language</h1>
+        <div id="container">
+            <select name="languages" id="languages"></select>
+
+            <ul id="badWordList">
+                <th>Restricted Words List</th>
+            </ul>
+        
+            <input type="text" id="badWordInput" name="badWordInput" placeholder="enter bad word">
+            <button id="badWordButton" onclick="AddBadWord()">Add Restricted Word to List</button>
+            <button id="clearbadWordButton" onclick="clearBadWords()">Clear Restricted Words</button>
+        
+            <br>
+        
+            <button id="startSpeech">Start</button>
+        
+            <div style="padding-top:100px">
+                Output:
+                <p id="output"><em>...diagnostic messages</em></p>
+            </div>
+        </div>
+
+
+        <script src="./main.js"></script>
+    </body>
+</html> 
